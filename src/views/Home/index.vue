@@ -5,6 +5,8 @@
         <TodayRecommend></TodayRecommend>
         <Rank></Rank>
         <Like></Like>
+        <Floor></Floor>
+        <Floor></Floor>
     </div>
 </template>
 
@@ -15,6 +17,7 @@ import ListContainer from './ListContainer';
 import TodayRecommend from './TodayRecommend'
 import Rank from './Rank'
 import Like from './Like'
+import Floor from './Floor'
 export default{
     components:{
         TypeNav,
@@ -22,6 +25,7 @@ export default{
         TodayRecommend,
         Rank,
         Like,
+        Floor,
     }
 }
 </script>

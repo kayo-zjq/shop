@@ -51,3 +51,5 @@ a:link:hover{
     clear: both;
     visibility: hidden;
 }
+
+fieldset, img { border: none; }

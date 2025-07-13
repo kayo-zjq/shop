@@ -1,3 +1,10 @@
+
+const path = require('path')
+
+function resolve (dir) {
+  return path.join(__dirname, dir)
+}
+
 const { defineConfig } = require('@vue/cli-service')
 module.exports = defineConfig({
 transpileDependencies: true,
@@ -7,4 +14,18 @@ transpileDependencies: true,
     //port: 8080, // 设置端口号
   //},
   lintOnSave: false,
+  configureWebpack: {
+    resolve: {
+      extensions: ['.js','.vue','.json'],
+      alias: {
+        '@': resolve('src')
+      }
+    }
+  }/*
+  resolve:{
+    extensions: ['.js','.vue','.json'],
+    alias:{
+      '@': resolve('src'),
+    }
+  },*/
 })

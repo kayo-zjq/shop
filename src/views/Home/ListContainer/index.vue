@@ -112,7 +112,7 @@
 </template>
 
 <style scoped lang="less">
-@import './css/swiper.min.css';
+@import '@/css/swiper/swiper.min.css';
 
 .list-container {
     width: 1200px;
@@ -291,7 +291,7 @@
 
 
 <script>
-import swiper from './css/swiper.min.js';
+import swiper from '@/css/swiper/swiper.min.js';
 
 export default {
     methods: {
