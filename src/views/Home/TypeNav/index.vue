@@ -1,7 +1,37 @@
 <template>
     <div class="type-nav">
         <div class="container">
-            <h2 class="all">全部商品分类</h2>
+            <div @mouseleave="resetChooseIndex">
+                <h2 class="all">全部商品分类</h2>
+                <div class="sort">
+                    <div class="all-sort-list2">
+                        <div class="item" v-for="(list_data1,index) in list" :key="list_data1.categoryId" @mouseenter="setChooseIndex(index)">
+                            <h3 :class="{ chooseNow: nowIndex == index }">
+                                <a>{{ list_data1.categoryName }}</a>
+                            </h3>
+                            <div class="item-list clearfix">
+                                <div class="subitem">
+                                    <dl class="fore" v-for="list_data2 in list_data1.categoryChild" :key="list_data2.categoryId">
+                                        <dt>
+                                            <a >{{ list_data2.categoryName }}</a>
+                                        </dt>
+                                        <dd>
+                                            <em v-for="list_data3 in list_data2.categoryChild" :key="list_data3.categoryId">
+                                                <a>{{ list_data3.categoryName }}</a>
+                                            </em>
+                                        </dd>
+                                    </dl>
+                                </div>
+                            </div>
+                        </div>
+
+                    
+                    
+                            
+                    </div>
+                </div>
+            </div>
+
             <nav class="nav">
                 <a href="###">服装城</a>
                 <a href="###">美妆馆</a>
@@ -14,34 +44,7 @@
             </nav>
 
 
-            <div class="sort">
-                <div class="all-sort-list2">
-                    <div class="item" v-for="list_data1 in list" :key="list_data1.categoryId">
-                        <h3>
-                            <a>{{ list_data1.categoryName }}</a>
-                        </h3>
-                        <div class="item-list clearfix">
-                            <div class="subitem">
-                                <dl class="fore" v-for="list_data2 in list_data1.categoryChild" :key="list_data2.categoryId">
-                                    <dt>
-                                        <a >{{ list_data2.categoryName }}</a>
-                                    </dt>
-                                    <dd>
-                                        <em v-for="list_data3 in list_data2.categoryChild" :key="list_data3.categoryId">
-                                            <a>{{ list_data3.categoryName }}</a>
-                                        </em>
-                                    </dd>
-                                </dl>
-                            </div>
-                        </div>
-                    </div>
-
-                
-                   
-                        
-                </div>
-            </div>
-
+           
         </div>
     </div>
 </template>
@@ -56,6 +59,16 @@ export default{
     data(){
         return {
             list : [],
+            //当前鼠标停留的位置
+            nowIndex: -1,
+        }
+    },
+    methods:{
+        setChooseIndex(index){
+            this.nowIndex = index;
+        },
+        resetChooseIndex(){
+            this.nowIndex = -1;
         }
     }
 
@@ -66,6 +79,9 @@ export default{
 .type-nav {
     border-bottom: 2px solid #e1251b;
 
+    .chooseNow{
+        background-color: skyblue;
+    }
     .container {
         width: 1200px;
         margin: 0 auto;
