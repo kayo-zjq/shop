@@ -9,7 +9,7 @@
                             <h3 :class="{ chooseNow: nowIndex == index }">
                                 <a>{{ list_data1.categoryName }}</a>
                             </h3>
-                            <div class="item-list clearfix">
+                            <div class="item-list clearfix" :style="{display:nowIndex==index?'block':'none'}">
                                 <div class="subitem">
                                     <dl class="fore" v-for="list_data2 in list_data1.categoryChild" :key="list_data2.categoryId">
                                         <dt>
@@ -51,6 +51,7 @@
 
 <script>
 import {reqcategoryList} from '@/api'
+import throttle from 'lodash/throttle'
 export default{
     async created(){
         this.list = await reqcategoryList();
@@ -64,12 +65,15 @@ export default{
         }
     },
     methods:{
-        setChooseIndex(index){
-            this.nowIndex = index;
-        },
+        setChooseIndex:throttle(
+            function(index){
+                this.nowIndex = index;
+            },50
+        ),
+       
         resetChooseIndex(){
-            this.nowIndex = -1;
-        }
+                this.nowIndex = -1;
+            },
     }
 
 }
@@ -120,11 +124,12 @@ export default{
 
             .all-sort-list2 {
                 .item {
+                    /*
                     &:hover {
                         .item-list {
                             display: block;
                         }
-                    }
+                    }*/
 
                     h3 {
                         line-height: 30px;
