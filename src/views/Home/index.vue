@@ -26,6 +26,13 @@ export default{
         Rank,
         Like,
         Floor,
-    }
+    },
+    data(){
+        return {
+            
+        }
+    },
+    methods:{
+    },
 }
 </script>

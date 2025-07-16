@@ -17,6 +17,10 @@ export default {
   components: {
     Header,
     Footer,
+  },
+  async mounted(){
+
+    this.$store.commit('TypeNav/getList');
   }
 }
 

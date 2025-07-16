@@ -1,36 +1,45 @@
 <template>
     <div class="type-nav">
         <div class="container">
-            <div @mouseleave="resetChooseIndex">
-                <h2 class="all">全部商品分类</h2>
-                <div class="sort">
-                    <div class="all-sort-list2">
-                        <div class="item" v-for="(list_data1,index) in list" :key="list_data1.categoryId" @mouseenter="setChooseIndex(index)">
-                            <h3 :class="{ chooseNow: nowIndex == index }">
-                                <a>{{ list_data1.categoryName }}</a>
-                            </h3>
-                            <div class="item-list clearfix" :style="{display:nowIndex==index?'block':'none'}">
-                                <div class="subitem">
-                                    <dl class="fore" v-for="list_data2 in list_data1.categoryChild" :key="list_data2.categoryId">
-                                        <dt>
-                                            <a >{{ list_data2.categoryName }}</a>
-                                        </dt>
-                                        <dd>
-                                            <em v-for="list_data3 in list_data2.categoryChild" :key="list_data3.categoryId">
-                                                <a>{{ list_data3.categoryName }}</a>
-                                            </em>
-                                        </dd>
-                                    </dl>
+            
+                <div @mouseleave="mouseLeaveEvent" @mouseenter="mouseEnterEvent">
+                    <h2 class="all">全部商品分类</h2>
+                    <Transition>
+                    <div class="sort" v-show="show">
+                        <div class="all-sort-list2" @click="goSearch">
+                            <div class="item" v-for="(list_data1, index) in list" :key="list_data1.categoryId"
+                                @mouseenter="setChooseIndex(index)">
+                                <h3 :class="{ chooseNow: nowIndex == index }">
+                                    <a :categoryName="list_data1.categoryName" :categoryId1="list_data1.categoryId">{{
+                    list_data1.categoryName }}</a>
+                                </h3>
+                                <div class="item-list clearfix"
+                                    :style="{ display: nowIndex == index ? 'block' : 'none' }">
+                                    <div class="subitem">
+                                        <dl class="fore" v-for="list_data2 in list_data1.categoryChild"
+                                            :key="list_data2.categoryId">
+                                            <dt>
+                                                <a :categoryName="list_data2.categoryName"
+                                                    :categoryId2="list_data2.categoryId">{{ list_data2.categoryName
+                                                    }}</a>
+                                            </dt>
+                                            <dd>
+                                                <em v-for="list_data3 in list_data2.categoryChild"
+                                                    :key="list_data3.categoryId">
+                                                    <a :categoryName="list_data3.categoryName"
+                                                        :categoryId3="list_data3.categoryId">{{ list_data3.categoryName
+                                                        }}</a>
+                                                </em>
+                                            </dd>
+                                        </dl>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-
-                    
-                    
-                            
                     </div>
+                    </Transition>
                 </div>
-            </div>
+            
 
             <nav class="nav">
                 <a href="###">服装城</a>
@@ -44,36 +53,90 @@
             </nav>
 
 
-           
+
         </div>
     </div>
 </template>
 
 <script>
-import {reqcategoryList} from '@/api'
 import throttle from 'lodash/throttle'
-export default{
-    async created(){
-        this.list = await reqcategoryList();
-        this.list = this.list.data;
+
+import { mapState } from 'vuex'
+
+export default {
+    computed: {
+        list() {
+            return this.$store.state.TypeNav.list;
+        }
+    }
+    ,
+    created() {
+        if (this.$route.name != 'Home') {
+            this.show = false;
+        }
+
     },
-    data(){
+    data() {
         return {
-            list : [],
+            show: true,
+            //list: [],
             //当前鼠标停留的位置
             nowIndex: -1,
         }
     },
-    methods:{
-        setChooseIndex:throttle(
-            function(index){
+    methods: {
+        setChooseIndex: throttle(
+            function (index) {
                 this.nowIndex = index;
-            },50
+            }, 50
         ),
-       
-        resetChooseIndex(){
-                this.nowIndex = -1;
-            },
+
+        mouseEnterEvent() {
+            if (this.$route.name != 'Home') {
+                this.show = true;
+            }
+            this.nowIndex = -1;
+        },
+        mouseLeaveEvent() {
+            if (this.$route.name != 'Home') {
+                this.show = false;
+            }
+        },
+
+        goSearch(event) {
+            //通过事件委托获得当前点击的标签
+            let e = event.target;
+            //获得当前标签的id和name值
+            let id1 = e.getAttribute('categoryId1');
+            let name = e.getAttribute('categoryName');
+            let id2 = e.getAttribute('categoryId2');
+            let id3 = e.getAttribute('categoryId3');
+
+
+            //提取当前标签
+            let nowId = null, nowName = null, index = -1;
+            if (name) {
+                nowName = name;
+                nowId = id1 ? id1 : id2 ? id2 : id3;
+                index = id1 ? 1 : id2 ? 2 : 3;
+            }
+
+
+            //如果需要跳转，记录跳转对象并进行跳转
+            let toPath = {
+                name: '',
+                query: {
+                }
+            };
+            if (nowId && nowName) {
+                toPath.name = 'Search';
+                toPath.query[`categoryName`] = nowName;
+                toPath.query[`categoryId${index}`] = nowId;
+                console.log(toPath);
+                this.$router.push(toPath);
+            }
+
+        }
     }
 
 }
@@ -81,11 +144,25 @@ export default{
 
 <style lang="less">
 .type-nav {
+
+    .v-enter-active,
+    .v-leave-active {
+        transition: opacity 0.5s ease;
+    }
+
+    .v-enter-from,
+    .v-leave-to {
+        opacity: 0;
+    }
+
+
+
     border-bottom: 2px solid #e1251b;
 
-    .chooseNow{
+    .chooseNow {
         background-color: skyblue;
     }
+
     .container {
         width: 1200px;
         margin: 0 auto;

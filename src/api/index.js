@@ -3,5 +3,8 @@ import Requests from "@/api/mockRequest";
 // import { mock } from "mockjs";
 
 //三级联动接口
-export const reqcategoryList = () => Requests.get("/categoryList");
+export const reqcategoryList = () => {
+    console.log('getcategory');
+    return Requests.get("/categoryList");
+}
 

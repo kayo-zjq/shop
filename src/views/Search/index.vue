@@ -1,13 +1,15 @@
 <template>
-    <div>
-        搜索
-    </div>
+    <TypeNav></TypeNav>
 </template>
 
 <script>
 import { mapState } from 'vuex';
+import TypeNav from '@/views/Home/TypeNav';
 
 export default{
+    components:{
+        TypeNav,
+    },
     computed:{
         ...mapState[
             'count'

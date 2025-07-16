@@ -2,7 +2,7 @@ const state={
 
 };
 
-const mutation = {
+const mutations = {
 
 };
 
@@ -12,6 +12,6 @@ const action = {
 
 export default{
     state,
-    mutation,
+    mutations,
     action,
 }

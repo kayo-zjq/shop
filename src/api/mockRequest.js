@@ -1,4 +1,6 @@
 import axios from 'axios';
+import nProgress from 'nprogress';
+import 'nprogress/nprogress.css'
 
 const requests = axios.create({
     baseURL:'/mock',
@@ -7,6 +9,7 @@ const requests = axios.create({
 
 requests.interceptors.request.use(
     function(config){
+        nProgress.start();
         return config;
     }
 );
@@ -14,6 +17,7 @@ requests.interceptors.request.use(
 
 requests.interceptors.response.use(
     function(response){
+        nProgress.done();
         return response.data;
     }
 );
