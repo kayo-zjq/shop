@@ -59,9 +59,14 @@ export default{
     },
     methods:{
         goSearch(){
+            let mixQuery = null;
+            if(this.$route.query){
+                mixQuery = this.$route.query;
+            }
             this.$router.push({
                 name: 'Search',
                 params:{keyWords:this.keywords},
+                query: mixQuery,
             })
         }
     }

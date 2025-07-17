@@ -9,16 +9,18 @@ const mutations = {
         
         state.list = tmpList.data;
        
-    }
+    },
 };
 
-const action = {
-
+const actions = {
+    getListAction(context){
+        context.commit('getList')
+    },
 }
 
 export default{
     namespaced: true,
     state,
     mutations,
-    action,
+    actions,
 }

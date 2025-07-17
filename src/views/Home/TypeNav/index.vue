@@ -1,17 +1,17 @@
 <template>
     <div class="type-nav">
         <div class="container">
-            
-                <div @mouseleave="mouseLeaveEvent" @mouseenter="mouseEnterEvent">
-                    <h2 class="all">全部商品分类</h2>
-                    <Transition>
+
+            <div @mouseleave="mouseLeaveEvent" @mouseenter="mouseEnterEvent">
+                <h2 class="all">全部商品分类</h2>
+                <Transition>
                     <div class="sort" v-show="show">
                         <div class="all-sort-list2" @click="goSearch">
                             <div class="item" v-for="(list_data1, index) in list" :key="list_data1.categoryId"
                                 @mouseenter="setChooseIndex(index)">
                                 <h3 :class="{ chooseNow: nowIndex == index }">
                                     <a :categoryName="list_data1.categoryName" :categoryId1="list_data1.categoryId">{{
-                    list_data1.categoryName }}</a>
+                list_data1.categoryName }}</a>
                                 </h3>
                                 <div class="item-list clearfix"
                                     :style="{ display: nowIndex == index ? 'block' : 'none' }">
@@ -37,9 +37,9 @@
                             </div>
                         </div>
                     </div>
-                    </Transition>
-                </div>
-            
+                </Transition>
+            </div>
+
 
             <nav class="nav">
                 <a href="###">服装城</a>
@@ -95,12 +95,13 @@ export default {
             if (this.$route.name != 'Home') {
                 this.show = true;
             }
-            this.nowIndex = -1;
+            //this.nowIndex = -1;
         },
         mouseLeaveEvent() {
             if (this.$route.name != 'Home') {
                 this.show = false;
             }
+            this.nowIndex = -1;
         },
 
         goSearch(event) {
@@ -114,27 +115,34 @@ export default {
 
 
             //提取当前标签
-            let nowId = null, nowName = null, index = -1;
-            if (name) {
-                nowName = name;
-                nowId = id1 ? id1 : id2 ? id2 : id3;
-                index = id1 ? 1 : id2 ? 2 : 3;
-            }
-
-
-            //如果需要跳转，记录跳转对象并进行跳转
-            let toPath = {
-                name: '',
-                query: {
-                }
-            };
-            if (nowId && nowName) {
+            
+            if (name) {//如果需要跳转，记录跳转对象并进行跳转
+                let toPath = {
+                    name: '',
+                    query: {
+                    }
+                };
                 toPath.name = 'Search';
-                toPath.query[`categoryName`] = nowName;
-                toPath.query[`categoryId${index}`] = nowId;
-                console.log(toPath);
+                toPath.query.name = name;
+                if(id1){
+                    toPath.query.category1Id = id1;
+                }
+                if(id2){
+                    toPath.query.category2Id = id2;
+                }
+                if(id3){
+                    toPath.query.category3Id = id3;
+                }
+                if(this.$route.params){
+                    toPath.params = this.$route.params;
+                }
                 this.$router.push(toPath);
             }
+
+
+
+
+
 
         }
     }

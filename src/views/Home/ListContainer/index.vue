@@ -2,19 +2,10 @@
     <div class="list-container">
         <div class="sortList clearfix">
             <div class="center">
-                <div class="swiper-container" id="mySwiper">
+                <div class="swiper-container" ref="mySwiper">
                     <div class="swiper-wrapper">
-                        <div class="swiper-slide">
-                            <img src="./images/banner1.jpg">
-                        </div>
-                        <div class="swiper-slide">
-                            <img src="./images/banner2.jpg">
-                        </div>
-                        <div class="swiper-slide">
-                            <img src="./images/banner3.jpg">
-                        </div>
-                        <div class="swiper-slide">
-                            <img src="./images/banner4.jpg">
+                        <div class="swiper-slide" v-for="imagesData in imagesList" :key="imagesData.id">
+                            <img :src="imagesData.imgUrl">
                         </div>
                     </div>
 
@@ -112,8 +103,6 @@
 </template>
 
 <style scoped lang="less">
-@import '@/css/swiper/swiper.min.css';
-
 .list-container {
     width: 1200px;
     margin: 0 auto;
@@ -291,11 +280,52 @@
 
 
 <script>
-import swiper from '@/css/swiper/swiper.min.js';
+import Swiper from "swiper";
+import "swiper/css/swiper.min.css";
 
 export default {
+    mounted() {
+        this.$store.dispatch('Home/getBannerList');
+
+
+
+        setTimeout(() => {
+            
+            
+            let mySwiper = new Swiper('.swiper-container', {
+
+                //开启循环模式
+                loop: true,
+
+                // 如果需要分页器
+                pagination: {
+                    el: '.swiper-pagination',
+                },
+
+                // 如果需要前进后退按钮
+                navigation: {
+                    nextEl: '.swiper-button-next',
+                    prevEl: '.swiper-button-prev',
+                },
+
+            });
+            console.log(`123341 ${this.imagesList}`);
+        }, 4000)
+
+    },
+    computed:{
+        imagesList(){
+            return this.$store.state.Home.bannerList;
+        },
+    },
     methods: {
-        swiper,
+
+    },
+    data() {
+        return {
+            
+
+        }
     }
 }
 </script>

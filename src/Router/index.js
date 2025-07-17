@@ -12,7 +12,7 @@ export default new VueRouter({
         {path : '/home',component:Home,name:'Home'},
         {path:'/login',component:Login,name:'Login'},
         {path:'/register',component:Register,name:'Register'},
-        {path:'/search',component:Search,name:'Search'},
+        {path:'/search/:keyWords',component:Search,name:'Search'},
         {path:'/',redirect:'/home'},
     ]
 })
