@@ -2,18 +2,7 @@
     <div class="list-container">
         <div class="sortList clearfix">
             <div class="center">
-                <div class="swiper-container" ref="mySwiper">
-                    <div class="swiper-wrapper">
-                        <div class="swiper-slide" v-for="imagesData in imagesList" :key="imagesData.id">
-                            <img :src="imagesData.imgUrl">
-                        </div>
-                    </div>
-
-                    <div class="swiper-pagination"></div>
-
-                    <div class="swiper-button-prev"></div>
-                    <div class="swiper-button-next"></div>
-                </div>
+                <CarouselComponents :carouselList="imagesList"></CarouselComponents>
             </div>
 
             <div class="right">
@@ -282,49 +271,30 @@
 <script>
 import Swiper from "swiper";
 import "swiper/css/swiper.min.css";
+import { mapState } from 'vuex'
 
 export default {
     mounted() {
-        this.$store.dispatch('Home/getBannerList');
-
-
-
-        setTimeout(() => {
-            
-            
-            let mySwiper = new Swiper('.swiper-container', {
-
-                //开启循环模式
-                loop: true,
-
-                // 如果需要分页器
-                pagination: {
-                    el: '.swiper-pagination',
-                },
-
-                // 如果需要前进后退按钮
-                navigation: {
-                    nextEl: '.swiper-button-next',
-                    prevEl: '.swiper-button-prev',
-                },
-
-            });
-            console.log(`123341 ${this.imagesList}`);
-        }, 4000)
-
+        this.$store.dispatch('Home/getBannerList')
     },
-    computed:{
-        imagesList(){
-            return this.$store.state.Home.bannerList;
-        },
+    watch: {
+        
+    },
+    computed: {
+        ...mapState({
+            imagesList: (state) => {
+                return state.Home.bannerList;
+            }
+        }),
+
     },
     methods: {
 
     },
     data() {
         return {
-            
 
+           
         }
     }
 }

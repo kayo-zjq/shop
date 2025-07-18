@@ -15,3 +15,8 @@ export const requestBannerImage = () => {
     return Requests.get('/banner');
 }
 
+
+//floor模块数据
+export const getFloorData = () => {
+    return Requests.get('/floor')
+}

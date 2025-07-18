@@ -4,6 +4,7 @@ import router from './Router'
 // 引入mockjs模拟数据文件
 import '@/mock/mockServe'
 
+
 //引入vuex
 import store from '@/store'
 
@@ -14,6 +15,9 @@ Vue.config.devtools = true
 import 'swiper/css/swiper.css'
 import 'swiper/css/swiper.min.css'
 
+//全局注册轮播图
+import CarouselComponents from '@/components/Carousel'
+Vue.component('CarouselComponents',CarouselComponents);
 
 Vue.config.productionTip = false
 

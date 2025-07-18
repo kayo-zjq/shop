@@ -2,7 +2,7 @@
     <div class="floor">
         <div class="py-container">
             <div class="title clearfix">
-                <h3 class="fl">家用电器</h3>
+                <h3 class="fl">{{ floorData.name }}</h3>
                 <div class="fr">
                     <ul class="nav-tabs clearfix">
                         <li class="active">
@@ -44,25 +44,7 @@
                             <img src="./images/floor-1-1.png" />
                         </div>
                         <div class="floorBanner">
-                            <div class="swiper-container" id="floor2Swiper">
-                                <div class="swiper-wrapper">
-                                    <div class="swiper-slide">
-                                        <img src="./images/floor-1-b01.png">
-                                    </div>
-                                    <div class="swiper-slide">
-                                        <img src="./images/floor-1-b02.png">
-                                    </div>
-                                    <div class="swiper-slide">
-                                        <img src="./images/floor-1-b03.png">
-                                    </div>
-                                </div>
-                                <!-- 如果需要分页器 -->
-                                <div class="swiper-pagination"></div>
-
-                                <!-- 如果需要导航按钮 -->
-                                <div class="swiper-button-prev"></div>
-                                <div class="swiper-button-next"></div>
-                            </div>
+                           <CarouselComponents :carouselList="floorData.carouselList"></CarouselComponents>
                         </div>
                         <div class="split">
                             <span class="floor-x-line"></span>
@@ -74,7 +56,7 @@
                             </div>
                         </div>
                         <div class="split center">
-                            <img src="./images/floor-1-4.png" />
+                            <img :src="floorData.bigImg" />
                         </div>
                         <div class="split">
                             <span class="floor-x-line"></span>
@@ -94,11 +76,24 @@
 
 
 <script>
+import Swiper from 'swiper';
+import "swiper/css/swiper.min.css";
+export default {
+    props: ['floorData'],
+    data() {
+        return {
+           
+        }
+    },
+    
+    watch: {
+        
+    },
 
+}
 </script>
 
 <style lang="less">
-@import '@/css/swiper/swiper.min.css';
 .floor {
     margin-top: 15px;
 

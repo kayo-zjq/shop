@@ -5,8 +5,10 @@
         <TodayRecommend></TodayRecommend>
         <Rank></Rank>
         <Like></Like>
-        <Floor></Floor>
-        <Floor></Floor>
+        <Floor v-for="nowData in floorData" :floorData="nowData">
+
+        </Floor>
+        
     </div>
 </template>
 
@@ -18,6 +20,7 @@ import TodayRecommend from './TodayRecommend'
 import Rank from './Rank'
 import Like from './Like'
 import Floor from './Floor'
+import { mapState } from 'vuex';
 export default{
     components:{
         TypeNav,
@@ -29,8 +32,16 @@ export default{
     },
     data(){
         return {
-            
+
         }
+    },
+    mounted(){
+        this.$store.dispatch('Home/getFloor');
+    },
+    computed:{
+        ...mapState({
+            floorData: state => state.Home.floorData,
+        })
     },
     methods:{
     },
