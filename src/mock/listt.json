@@ -1,0 +1,46 @@
+[
+    {
+        "attrsList": [
+            {
+                "attrId": 412,
+                "attrName": "内存",
+                "attrValueList": [
+                    "16G",
+                    "4G",
+                    "32G",
+                    "6G",
+                    "8G"
+                ]
+            }
+        ],
+        "goodsList": [
+            {
+                "attrs": 1,
+                "category1Id": 0,
+                "category1Name": "1",
+                "category2Id": 2,
+                "category2Name": "2",
+                "category3Id": 3,
+                "category3Name": "3",
+                "createTime": 11,
+                "defaultImg": "./phone.jpg",
+                "hotScore": 1,
+                "id": 1,
+                "price": 1000,
+                "title": "手机1",
+                "tmId": 1,
+                "tmName": "华为"
+            }
+        ],
+        "pageNo": 1,
+        "pageSize": 10,
+        "total": 1,
+        "totalPages": 12,
+        "trademarkList": [
+            {
+                "tmId": 1,
+                "tmName": "小米"
+            }
+        ]
+    }
+]

@@ -20,3 +20,8 @@ export const requestBannerImage = () => {
 export const getFloorData = () => {
     return Requests.get('/floor')
 }
+
+//搜索页数据
+export const getSearchList = (params)=>{
+    return Requests.get('/list')
+}

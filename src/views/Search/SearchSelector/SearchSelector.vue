@@ -4,8 +4,8 @@
       <div class="fl key brand">品牌</div>
       <div class="value logos">
         <ul class="logo-list">
-          <li>索尼（SONY）</li>
-          <li>TCL</li>
+          <li v-for="data in searchData[0].trademarkList">{{ data.tmName }}</li>
+          <!--li>TCL</li>
           <li>长虹（CHANGHONG）</li>
           <li>飞利浦（PHILIPS）</li>
           <li>风行电视</li>
@@ -21,7 +21,7 @@
           <li><img src="./images/phone01.png" /></li>
           <li><img src="./images/phone06.png" /></li>
           <li><img src="./images/phone07.png" /></li>
-          <li><img src="./images/phone02.png" /></li>
+          <li><img src="./images/phone02.png" /></li-->
         </ul>
       </div>
       <div class="ext">
@@ -29,14 +29,14 @@
         <a href="javascript:void(0);">更多</a>
       </div>
     </div>
-    <div class="type-wrap">
-      <div class="fl key">网络制式</div>
+    <div class="type-wrap" v-for="data in searchData[0].attrsList">
+      <div class="fl key">{{ data.attrName }}</div>
       <div class="fl value">
         <ul class="type-list">
-          <li>
-            <a>GSM（移动/联通2G）</a>
+          <li v-for="attr in data.attrValueList">
+            <a>{{ attr }}</a>
           </li>
-          <li>
+          <!--li>
             <a>电信2G</a>
           </li>
           <li>
@@ -62,12 +62,12 @@
           </li>
           <li>
             <a>联通4G</a>
-          </li>
+          </li-->
         </ul>
       </div>
       <div class="fl ext"></div>
     </div>
-    <div class="type-wrap">
+    <!--div class="type-wrap">
       <div class="fl key">显示屏尺寸</div>
       <div class="fl value">
         <ul class="type-list">
@@ -154,13 +154,23 @@
       </div>
       <div class="fl ext">
       </div>
-    </div>
+    </div-->
   </div>
 </template>
 
 <script>
   export default {
     name: 'SearchSelector',
+    data(){
+      return{
+
+      }
+    },
+    computed:{
+      searchData(){
+        return this.$store.state.Search.list;
+      }
+    }
   }
 </script>
 
