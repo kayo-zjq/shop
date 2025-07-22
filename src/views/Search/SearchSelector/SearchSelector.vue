@@ -4,7 +4,7 @@
       <div class="fl key brand">品牌</div>
       <div class="value logos">
         <ul class="logo-list">
-          <li v-for="data in searchData[0].trademarkList">{{ data.tmName }}</li>
+          <li v-for="data in searchData[0]?.trademarkList" @click="setTrademarkName(data)">{{ data.tmName }}</li>
           <!--li>TCL</li>
           <li>长虹（CHANGHONG）</li>
           <li>飞利浦（PHILIPS）</li>
@@ -29,11 +29,11 @@
         <a href="javascript:void(0);">更多</a>
       </div>
     </div>
-    <div class="type-wrap" v-for="data in searchData[0].attrsList">
+    <div class="type-wrap" v-for="data in searchData[0]?.attrsList" >
       <div class="fl key">{{ data.attrName }}</div>
       <div class="fl value">
         <ul class="type-list">
-          <li v-for="attr in data.attrValueList">
+          <li v-for="attr in data.attrValueList" @click="setAttrsList(`${data.attrId}:${data.attrName}:${attr}`)">
             <a>{{ attr }}</a>
           </li>
           <!--li>
@@ -170,7 +170,16 @@
       searchData(){
         return this.$store.state.Search.list;
       }
-    }
+    },
+    methods:{
+      setTrademarkName(data){
+        this.$emit("getTrademarkName",data);
+      },
+      setAttrsList(data){
+        this.$emit('getAttrsList',data);
+      }
+    },
+    
   }
 </script>
 

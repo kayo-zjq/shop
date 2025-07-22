@@ -123,7 +123,7 @@ export default {
                     }
                 };
                 toPath.name = 'Search';
-                toPath.query.name = name;
+                toPath.query.categoryName = name;
                 if(id1){
                     toPath.query.category1Id = id1;
                 }

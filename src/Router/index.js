@@ -8,6 +8,7 @@ import Search from '../views/Search'
 Vue.use(VueRouter);
 
 export default new VueRouter({
+    mode:'history',
     routes:[
         {path : '/home',component:Home,name:'Home'},
         {path:'/login',component:Login,name:'Login'},

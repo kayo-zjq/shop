@@ -11,45 +11,39 @@
             </li>
           </ul>
           <ul class="fl sui-tag">
-            <li class="with-x">手机</li>
-            <li class="with-x">iphone<i>×</i></li>
-            <li class="with-x">华为<i>×</i></li>
-            <li class="with-x">OPPO<i>×</i></li>
+            <li class="with-x" v-if="$route.query.categoryName">{{ $route.query.categoryName }}<i @click="resetQuery">×</i></li>
+            <li class="with-x" v-if="$route.params.keyWords">{{  $route.params.keyWords }}<i @click="resetParams">×</i></li>
+            <li class="with-x" v-if="searchParams.trademark">{{ searchParams.trademark.split(':')[1] }}<i @click="resetTradeMark">×</i></li>
+            <li class="with-x" v-if="searchParams.props" v-for="data in searchParams.props">{{ data.split(':')[2] }}<i @click="resetProps(data)">×</i></li>
           </ul>
         </div>
 
         <!--selector-->
-        <SearchSelector />
+        <SearchSelector @getTrademarkName="postTrademarkName" @getAttrsList="postAttrsList"/>
 
         <!--details-->
         <div class="details clearfix">
           <div class="sui-navbar">
             <div class="navbar-inner filter">
               <ul class="sui-nav">
-                <li class="active">
-                  <a href="#">综合</a>
+                <li :class="{active:this.searchParams.order.indexOf('1')!=-1}">
+                  <a @click.prevent>综合
+                    <span v-show="ifAsc">⬆</span>
+                    <span v-show="ifDesc">⬇</span>
+                  </a>
                 </li>
-                <li>
-                  <a href="#">销量</a>
-                </li>
-                <li>
-                  <a href="#">新品</a>
-                </li>
-                <li>
-                  <a href="#">评价</a>
-                </li>
-                <li>
-                  <a href="#">价格⬆</a>
-                </li>
-                <li>
-                  <a href="#">价格⬇</a>
+                <li :class="{active:this.searchParams.order.indexOf('2')!=-1}">
+                  <a @click.prevent>价格
+                    <span v-if="ifAsc">⬆</span>
+                    <span v-if="ifDesc">⬇</span>
+                  </a>
                 </li>
               </ul>
             </div>
           </div>
           <div class="goods-list">
             <ul class="yui3-g">
-              <li class="yui3-u-1-5" v-for="data in listData[0].goodsList" :key="data.id">
+              <li class="yui3-u-1-5" v-for="data in listData[0]?.goodsList" :key="data.id">
                 <div class="list-wrap">
                   <div class="p-img">
                     <a href="item.html" target="_blank"><img :src="data.defaultImg" /></a>
@@ -326,385 +320,467 @@
 </template>
 
 <script>
-  import { mapState } from 'vuex';
+import { mapState } from 'vuex';
 import SearchSelector from './SearchSelector/SearchSelector';
-  import TypeNav from '@/views/Home/TypeNav';
-  export default {
-    name: 'Search',
+import TypeNav from '@/views/Home/TypeNav';
+export default {
+  name: 'Search',
 
-    components: {
-      SearchSelector,
-      TypeNav,
+  components: {
+    SearchSelector,
+    TypeNav,
+  },
+  //通过三级联动点击进入search页面，数据通过url的query传送，在head部分通过点击搜索按钮传递的参数，通过params传输
+  data() {
+    return {
+      //listData : {},
+      
+      searchParams: {
+        category1Id: undefined,
+        category2Id: undefined,
+        category3Id: undefined,
+        categoryName: undefined,
+        keyWords: undefined,
+        props: [],
+        trademark: undefined,
+        order: '1.asc',
+        pageNo: 1,
+        pageSize: 10,
+      },
+      TrademarkName:undefined,
+    }
+  },
+
+  beforeMount() {
+    //进入当前页面，设置search需要传递的参数，有params的情况下，对应的是keywords，有query的情况下，
+    //对应categoryName和categoryId
+    //this.searchParams.category1Id = this.searchParams.category2Id = this.searchParams.category3Id = 0;
+    this.searchParams = Object.assign( this.searchParams, this.$route.query, this.$route.params)
+    console.log(`111 ${this.$route.query.category1Id} ${this.$route.query.category2Id} ${this.$route.query.category3Id} ${this.searchParams.category3Id}`);
+    this.getData(this.searchParams);
+    
+    
+  },
+
+  mounted() {
+    
+  },
+
+  watch: {
+    $route(oldValue, newValue) {
+      console.log('change');
+      this.searchParams.category1Id = this.searchParams.category2Id = this.searchParams.category3Id = undefined;
+      console.log(this.$route.query);
+      this.searchParams = Object.assign( this.searchParams, this.$route.query, this.$route.params);
+      this.getData(this.searchParams);
+
+      //this.listData = this.$store.state.Search.list;
+    }
+  },
+
+  methods: {
+    getData(params) {
+      //发送请求，把服务器端的数据存在仓库里
+      console.log(`category1Id ${params.category1Id}`);
+      console.log(`category2Id ${params.category2Id}`);
+      console.log(`category3Id ${params.category3Id}`);
+      console.log(`categoryName ${params.categoryName}`);
+      console.log(`keyword ${params.keyWords}`);
+      console.log(`props ${params.props}`);
+      console.log(`trademark ${params.trademark}`);
+      
+      this.$store.dispatch('Search/getSearchList',params);
     },
+    resetQuery(){
+       //置空category相关的参数
+       this.searchParams.category1Id = this.searchParams.category2Id = this.searchParams.category3Id = this.searchParams.categoryName= undefined;
+       //重新进入页面
+       this.$router.push({name:'Search',params:this.$route.params})
+    },
+    resetParams(){
+      //置空搜索框
+      //置空searchParams中的keywords
+      this.searchParams.keyWords = '';
+      
+      //重新进入页面，保留query，置空params
+      console.log("111");
+      this.$router.push({name:'Search',query:this.$route.query,params:{keyWords:undefined}});
+    },
+    postTrademarkName(data){
+      this.searchParams.trademark = `${data.tmId}:${data.tmName}`;
+      this.getData(this.searchParams);
 
-    data(){
-      return {
-        //listData : {},
-        goods : listData.goodsList
+    },
+    resetTradeMark(){
+      //置空search传输数据中的tardemark
+      this.searchParams.trademark = undefined;
+      //重新获取当前显示的数据
+      this.getData(this.searchParams);
+    },
+    postAttrsList(data){
+      //把子组件获得的数据记录，并发送请求当前数据
+      if(this.searchParams.props.indexOf(data)==-1){
+        this.searchParams.props.push(data);
       }
-    },
+      this.getData(this.searchParams);
 
-    beforeMount(){
-      this.$store.dispatch('Search/getSearchList');
     },
+    resetProps(data){
+      let index = this.searchParams.props.indexOf(data);
+      this.searchParams.props.splice(index,1);
+      this.getData(this.searchParams);
 
-    mounted(){
-      //this.getData();
-    },
-
-    watch:{
-      $route(oldValue, newValue){
-        this.$store.dispatch('Search/getSearchList');
-        //this.listData = this.$store.state.Search.list;
-      } 
-    },
-
-    methods:{
-      //getData(){
-        //this.$store.dispatch('Search/getSearchList');
-        //this.listData = this.$store.state.Search.list;
-        //console.log(`listData ${this.listData[0]}`);
-      //},
-    },
-    computed: {
-      listData() {
-        return this.$store.state.Search.list;
-      }
     },
     
-  }
+    
+  },
+  computed: {
+    listData() {
+       return this.$store.state.Search.list;
+    },
+    
+    ifAsc(){
+      return this.searchParams.order.indexOf('asc') != -1;
+    },
+    ifDesc(){
+      console.log(`desc ${this.searchParams.order.indexOf('desc') != -1}`);
+      return this.searchParams.order.indexOf('desc') != -1;
+    }
+  },
+
+}
 </script>
 
 <style lang="less" scoped>
-  .main {
-    margin: 10px 0;
+.main {
+  margin: 10px 0;
 
-    .py-container {
-      width: 1200px;
-      margin: 0 auto;
+  .py-container {
+    width: 1200px;
+    margin: 0 auto;
 
-      .bread {
-        margin-bottom: 5px;
-        overflow: hidden;
+    .bread {
+      margin-bottom: 5px;
+      overflow: hidden;
 
-        .sui-breadcrumb {
-          padding: 3px 15px;
-          margin: 0;
-          font-weight: 400;
-          border-radius: 3px;
-          float: left;
+      .sui-breadcrumb {
+        padding: 3px 15px;
+        margin: 0;
+        font-weight: 400;
+        border-radius: 3px;
+        float: left;
 
-          li {
-            display: inline-block;
-            line-height: 18px;
+        li {
+          display: inline-block;
+          line-height: 18px;
 
-            a {
-              color: #666;
-              text-decoration: none;
-
-              &:hover {
-                color: #4cb9fc;
-              }
-            }
-          }
-        }
-
-        .sui-tag {
-          margin-top: -5px;
-          list-style: none;
-          font-size: 0;
-          line-height: 0;
-          padding: 5px 0 0;
-          margin-bottom: 18px;
-          float: left;
-
-          .with-x {
-            font-size: 12px;
-            margin: 0 5px 5px 0;
-            display: inline-block;
-            overflow: hidden;
-            color: #000;
-            background: #f7f7f7;
-            padding: 0 7px;
-            height: 20px;
-            line-height: 20px;
-            border: 1px solid #dedede;
-            white-space: nowrap;
-            transition: color 400ms;
-            cursor: pointer;
-
-            i {
-              margin-left: 10px;
-              cursor: pointer;
-              font: 400 14px tahoma;
-              display: inline-block;
-              height: 100%;
-              vertical-align: middle;
-            }
+          a {
+            color: #666;
+            text-decoration: none;
 
             &:hover {
-              color: #28a3ef;
+              color: #4cb9fc;
             }
           }
         }
       }
 
-      .details {
-        margin-bottom: 5px;
+      .sui-tag {
+        margin-top: -5px;
+        list-style: none;
+        font-size: 0;
+        line-height: 0;
+        padding: 5px 0 0;
+        margin-bottom: 18px;
+        float: left;
 
-        .sui-navbar {
-          overflow: visible;
-          margin-bottom: 0;
+        .with-x {
+          font-size: 12px;
+          margin: 0 5px 5px 0;
+          display: inline-block;
+          overflow: hidden;
+          color: #000;
+          background: #f7f7f7;
+          padding: 0 7px;
+          height: 20px;
+          line-height: 20px;
+          border: 1px solid #dedede;
+          white-space: nowrap;
+          transition: color 400ms;
+          cursor: pointer;
 
-          .filter {
-            min-height: 40px;
-            padding-right: 20px;
-            background: #fbfbfb;
-            border: 1px solid #e2e2e2;
-            padding-left: 0;
-            border-radius: 0;
-            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.065);
+          i {
+            margin-left: 10px;
+            cursor: pointer;
+            font: 400 14px tahoma;
+            display: inline-block;
+            height: 100%;
+            vertical-align: middle;
+          }
 
-            .sui-nav {
-              position: relative;
-              left: 0;
-              display: block;
+          &:hover {
+            color: #28a3ef;
+          }
+        }
+      }
+    }
+
+    .details {
+      margin-bottom: 5px;
+
+      .sui-navbar {
+        overflow: visible;
+        margin-bottom: 0;
+
+        .filter {
+          min-height: 40px;
+          padding-right: 20px;
+          background: #fbfbfb;
+          border: 1px solid #e2e2e2;
+          padding-left: 0;
+          border-radius: 0;
+          box-shadow: 0 1px 4px rgba(0, 0, 0, 0.065);
+
+          .sui-nav {
+            position: relative;
+            left: 0;
+            display: block;
+            float: left;
+            margin: 0 10px 0 0;
+
+            li {
               float: left;
-              margin: 0 10px 0 0;
+              line-height: 18px;
 
-              li {
-                float: left;
-                line-height: 18px;
+              a {
+                display: block;
+                cursor: pointer;
+                padding: 11px 15px;
+                color: #777;
+                text-decoration: none;
+              }
 
+              &.active {
                 a {
-                  display: block;
-                  cursor: pointer;
-                  padding: 11px 15px;
-                  color: #777;
-                  text-decoration: none;
-                }
-
-                &.active {
-                  a {
-                    background: #e1251b;
-                    color: #fff;
-                  }
+                  background: #e1251b;
+                  color: #fff;
                 }
               }
             }
           }
         }
+      }
 
-        .goods-list {
-          margin: 20px 0;
+      .goods-list {
+        margin: 20px 0;
 
-          ul {
-            display: flex;
-            flex-wrap: wrap;
+        ul {
+          display: flex;
+          flex-wrap: wrap;
 
-            li {
-              height: 100%;
-              width: 20%;
-              margin-top: 10px;
-              line-height: 28px;
+          li {
+            height: 100%;
+            width: 20%;
+            margin-top: 10px;
+            line-height: 28px;
 
-              .list-wrap {
-                .p-img {
-                  padding-left: 15px;
-                  width: 215px;
-                  height: 255px;
+            .list-wrap {
+              .p-img {
+                padding-left: 15px;
+                width: 215px;
+                height: 255px;
 
-                  a {
-                    color: #666;
+                a {
+                  color: #666;
 
-                    img {
-                      max-width: 100%;
-                      height: auto;
-                      vertical-align: middle;
-                    }
+                  img {
+                    max-width: 100%;
+                    height: auto;
+                    vertical-align: middle;
                   }
                 }
+              }
 
-                .price {
-                  padding-left: 15px;
-                  font-size: 18px;
-                  color: #c81623;
+              .price {
+                padding-left: 15px;
+                font-size: 18px;
+                color: #c81623;
 
-                  strong {
-                    font-weight: 700;
+                strong {
+                  font-weight: 700;
 
-                    i {
-                      margin-left: -5px;
-                    }
+                  i {
+                    margin-left: -5px;
                   }
                 }
+              }
 
-                .attr {
-                  padding-left: 15px;
-                  width: 85%;
-                  overflow: hidden;
-                  margin-bottom: 8px;
-                  min-height: 38px;
+              .attr {
+                padding-left: 15px;
+                width: 85%;
+                overflow: hidden;
+                margin-bottom: 8px;
+                min-height: 38px;
+                cursor: pointer;
+                line-height: 1.8;
+                display: -webkit-box;
+                -webkit-box-orient: vertical;
+                -webkit-line-clamp: 2;
+
+                a {
+                  color: #333;
+                  text-decoration: none;
+                }
+              }
+
+              .commit {
+                padding-left: 15px;
+                height: 22px;
+                font-size: 13px;
+                color: #a7a7a7;
+
+                span {
+                  font-weight: 700;
+                  color: #646fb0;
+                }
+              }
+
+              .operate {
+                padding: 12px 15px;
+
+                .sui-btn {
+                  display: inline-block;
+                  padding: 2px 14px;
+                  box-sizing: border-box;
+                  margin-bottom: 0;
+                  font-size: 12px;
+                  line-height: 18px;
+                  text-align: center;
+                  vertical-align: middle;
                   cursor: pointer;
-                  line-height: 1.8;
-                  display: -webkit-box;
-                  -webkit-box-orient: vertical;
-                  -webkit-line-clamp: 2;
+                  border-radius: 0;
+                  background-color: transparent;
+                  margin-right: 15px;
+                }
 
-                  a {
-                    color: #333;
+                .btn-bordered {
+                  min-width: 85px;
+                  background-color: transparent;
+                  border: 1px solid #8c8c8c;
+                  color: #8c8c8c;
+
+                  &:hover {
+                    border: 1px solid #666;
+                    color: #fff !important;
+                    background-color: #666;
                     text-decoration: none;
                   }
                 }
 
-                .commit {
-                  padding-left: 15px;
-                  height: 22px;
-                  font-size: 13px;
-                  color: #a7a7a7;
+                .btn-danger {
+                  border: 1px solid #e1251b;
+                  color: #e1251b;
 
-                  span {
-                    font-weight: 700;
-                    color: #646fb0;
-                  }
-                }
-
-                .operate {
-                  padding: 12px 15px;
-
-                  .sui-btn {
-                    display: inline-block;
-                    padding: 2px 14px;
-                    box-sizing: border-box;
-                    margin-bottom: 0;
-                    font-size: 12px;
-                    line-height: 18px;
-                    text-align: center;
-                    vertical-align: middle;
-                    cursor: pointer;
-                    border-radius: 0;
-                    background-color: transparent;
-                    margin-right: 15px;
-                  }
-
-                  .btn-bordered {
-                    min-width: 85px;
-                    background-color: transparent;
-                    border: 1px solid #8c8c8c;
-                    color: #8c8c8c;
-
-                    &:hover {
-                      border: 1px solid #666;
-                      color: #fff !important;
-                      background-color: #666;
-                      text-decoration: none;
-                    }
-                  }
-
-                  .btn-danger {
+                  &:hover {
                     border: 1px solid #e1251b;
-                    color: #e1251b;
-
-                    &:hover {
-                      border: 1px solid #e1251b;
-                      background-color: #e1251b;
-                      color: white !important;
-                      text-decoration: none;
-                    }
+                    background-color: #e1251b;
+                    color: white !important;
+                    text-decoration: none;
                   }
                 }
               }
             }
           }
         }
+      }
 
-        .page {
-          width: 733px;
-          height: 66px;
-          overflow: hidden;
-          float: right;
+      .page {
+        width: 733px;
+        height: 66px;
+        overflow: hidden;
+        float: right;
 
-          .sui-pagination {
-            margin: 18px 0;
+        .sui-pagination {
+          margin: 18px 0;
 
-            ul {
-              margin-left: 0;
-              margin-bottom: 0;
-              vertical-align: middle;
-              width: 490px;
-              float: left;
+          ul {
+            margin-left: 0;
+            margin-bottom: 0;
+            vertical-align: middle;
+            width: 490px;
+            float: left;
 
-              li {
+            li {
+              line-height: 18px;
+              display: inline-block;
+
+              a {
+                position: relative;
+                float: left;
                 line-height: 18px;
-                display: inline-block;
+                text-decoration: none;
+                background-color: #fff;
+                border: 1px solid #e0e9ee;
+                margin-left: -1px;
+                font-size: 14px;
+                padding: 9px 18px;
+                color: #333;
+              }
 
+              &.active {
                 a {
+                  background-color: #fff;
+                  color: #e1251b;
+                  border-color: #fff;
+                  cursor: default;
+                }
+              }
+
+              &.prev {
+                a {
+                  background-color: #fafafa;
+                }
+              }
+
+              &.disabled {
+                a {
+                  color: #999;
+                  cursor: default;
+                }
+              }
+
+              &.dotted {
+                span {
+                  margin-left: -1px;
                   position: relative;
                   float: left;
                   line-height: 18px;
                   text-decoration: none;
                   background-color: #fff;
-                  border: 1px solid #e0e9ee;
-                  margin-left: -1px;
                   font-size: 14px;
+                  border: 0;
                   padding: 9px 18px;
                   color: #333;
                 }
+              }
 
-                &.active {
-                  a {
-                    background-color: #fff;
-                    color: #e1251b;
-                    border-color: #fff;
-                    cursor: default;
-                  }
-                }
-
-                &.prev {
-                  a {
-                    background-color: #fafafa;
-                  }
-                }
-
-                &.disabled {
-                  a {
-                    color: #999;
-                    cursor: default;
-                  }
-                }
-
-                &.dotted {
-                  span {
-                    margin-left: -1px;
-                    position: relative;
-                    float: left;
-                    line-height: 18px;
-                    text-decoration: none;
-                    background-color: #fff;
-                    font-size: 14px;
-                    border: 0;
-                    padding: 9px 18px;
-                    color: #333;
-                  }
-                }
-
-                &.next {
-                  a {
-                    background-color: #fafafa;
-                  }
+              &.next {
+                a {
+                  background-color: #fafafa;
                 }
               }
             }
+          }
 
-            div {
-              color: #333;
-              font-size: 14px;
-              float: right;
-              width: 241px;
-            }
+          div {
+            color: #333;
+            font-size: 14px;
+            float: right;
+            width: 241px;
           }
         }
       }
     }
   }
+}
 </style>
