@@ -26,13 +26,13 @@
           <div class="sui-navbar">
             <div class="navbar-inner filter">
               <ul class="sui-nav">
-                <li :class="{active:this.searchParams.order.indexOf('1')!=-1}">
+                <li :class="{active:this.searchParams.order.indexOf('1')!=-1}" @click="changeButton('1')">
                   <a @click.prevent>综合
                     <span v-show="ifAsc">⬆</span>
                     <span v-show="ifDesc">⬇</span>
                   </a>
                 </li>
-                <li :class="{active:this.searchParams.order.indexOf('2')!=-1}">
+                <li :class="{active:this.searchParams.order.indexOf('2')!=-1}" @click="changeButton('2')" >
                   <a @click.prevent>价格
                     <span v-if="ifAsc">⬆</span>
                     <span v-if="ifDesc">⬇</span>
@@ -284,35 +284,9 @@
               </li-->
             </ul>
           </div>
-          <div class="fr page">
-            <div class="sui-pagination clearfix">
-              <ul>
-                <li class="prev disabled">
-                  <a href="#">«上一页</a>
-                </li>
-                <li class="active">
-                  <a href="#">1</a>
-                </li>
-                <li>
-                  <a href="#">2</a>
-                </li>
-                <li>
-                  <a href="#">3</a>
-                </li>
-                <li>
-                  <a href="#">4</a>
-                </li>
-                <li>
-                  <a href="#">5</a>
-                </li>
-                <li class="dotted"><span>...</span></li>
-                <li class="next">
-                  <a href="#">下一页»</a>
-                </li>
-              </ul>
-              <div><span>共10页&nbsp;</span></div>
-            </div>
-          </div>
+
+          <!--continues 连续页码 pageNo 当前是第几页  pageSize 每页有多少数据   total 一共有多少条数据  totalPage 一共多少页-->
+          <FrPage :pageNo="4" :pageSize="10" :total="92" :continue="7"></FrPage>
         </div>
       </div>
     </div>
@@ -343,7 +317,7 @@ export default {
         keyWords: undefined,
         props: [],
         trademark: undefined,
-        order: '1.asc',
+        order: '1.desc',
         pageNo: 1,
         pageSize: 10,
       },
@@ -388,6 +362,7 @@ export default {
       console.log(`keyword ${params.keyWords}`);
       console.log(`props ${params.props}`);
       console.log(`trademark ${params.trademark}`);
+      console.log(`order ${params.order}`);
       
       this.$store.dispatch('Search/getSearchList',params);
     },
@@ -431,6 +406,22 @@ export default {
       this.getData(this.searchParams);
 
     },
+    //点击综合或价格按钮时，修改当前排序图标，并且重新向服务器发生请求
+    changeButton(id){
+      //如果点击按钮和上一个默认按钮是同一个，则只切换状态
+      //如果点击按钮和上一个默认按钮不是同一个，则切换按钮，并返回按钮默认顺序
+      let nextOrder = '';
+      if( this.searchParams.order[0] != id ){
+        //默认降序
+        nextOrder = `${id}:desc`;
+      }else{
+        nextOrder = `${id}:${this.searchParams.order.indexOf('desc')==-1?'desc':'asc'}`;
+      }
+      //更新params参数
+      this.searchParams.order = nextOrder;
+      //发送数据
+      this.getData(this.searchParams);
+    }
     
     
   },
@@ -694,92 +685,7 @@ export default {
         }
       }
 
-      .page {
-        width: 733px;
-        height: 66px;
-        overflow: hidden;
-        float: right;
 
-        .sui-pagination {
-          margin: 18px 0;
-
-          ul {
-            margin-left: 0;
-            margin-bottom: 0;
-            vertical-align: middle;
-            width: 490px;
-            float: left;
-
-            li {
-              line-height: 18px;
-              display: inline-block;
-
-              a {
-                position: relative;
-                float: left;
-                line-height: 18px;
-                text-decoration: none;
-                background-color: #fff;
-                border: 1px solid #e0e9ee;
-                margin-left: -1px;
-                font-size: 14px;
-                padding: 9px 18px;
-                color: #333;
-              }
-
-              &.active {
-                a {
-                  background-color: #fff;
-                  color: #e1251b;
-                  border-color: #fff;
-                  cursor: default;
-                }
-              }
-
-              &.prev {
-                a {
-                  background-color: #fafafa;
-                }
-              }
-
-              &.disabled {
-                a {
-                  color: #999;
-                  cursor: default;
-                }
-              }
-
-              &.dotted {
-                span {
-                  margin-left: -1px;
-                  position: relative;
-                  float: left;
-                  line-height: 18px;
-                  text-decoration: none;
-                  background-color: #fff;
-                  font-size: 14px;
-                  border: 0;
-                  padding: 9px 18px;
-                  color: #333;
-                }
-              }
-
-              &.next {
-                a {
-                  background-color: #fafafa;
-                }
-              }
-            }
-          }
-
-          div {
-            color: #333;
-            font-size: 14px;
-            float: right;
-            width: 241px;
-          }
-        }
-      }
     }
   }
 }

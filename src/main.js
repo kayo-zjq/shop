@@ -17,7 +17,11 @@ import 'swiper/css/swiper.min.css'
 
 //全局注册轮播图
 import CarouselComponents from '@/components/Carousel'
-Vue.component('CarouselComponents',CarouselComponents);
+Vue.component(CarouselComponents.name,CarouselComponents);
+
+//全局注册分页
+import FrPage from '@/components/FrPage'
+Vue.component(FrPage.name,FrPage);
 
 Vue.config.productionTip = false
 
