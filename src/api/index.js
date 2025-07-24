@@ -25,3 +25,8 @@ export const getFloorData = () => {
 export const getSearchList = (params)=>{
     return Requests.get('/list')
 }
+
+//获取详情页数据
+export const getDetailData = (params) => {
+    return Requests.get('/item',params)
+}

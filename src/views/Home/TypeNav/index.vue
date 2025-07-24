@@ -64,6 +64,7 @@ import throttle from 'lodash/throttle'
 import { mapState } from 'vuex'
 
 export default {
+    name:'TypeNav',
     computed: {
         list() {
             return this.$store.state.TypeNav.list;

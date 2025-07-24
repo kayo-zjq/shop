@@ -43,10 +43,10 @@
           </div>
           <div class="goods-list">
             <ul class="yui3-g">
-              <li class="yui3-u-1-5" v-for="data in listData[0]?.goodsList" :key="data.id">
+              <li class="yui3-u-1-5" v-for="data in listData?.goodsList" :key="data.id">
                 <div class="list-wrap">
                   <div class="p-img">
-                    <a href="item.html" target="_blank"><img :src="data.defaultImg" /></a>
+                    <router-link :to="{name:'Detail',params:{id:data.tmId}}"><img :src="data.defaultImg" /></router-link>
                   </div>
                   <div class="price">
                     <strong>
@@ -286,7 +286,7 @@
           </div>
 
           <!--continues 连续页码 pageNo 当前是第几页  pageSize 每页有多少数据   total 一共有多少条数据  totalPage 一共多少页-->
-          <FrPage :pageNo="4" :pageSize="10" :total="92" :continue="7"></FrPage>
+          <FrPage :pageNo="searchParams?.pageNo" :pageSize="searchParams?.pageSize" :total="searchParams?.total" :continue="5" @goNewPage="goNewPage"></FrPage>
         </div>
       </div>
     </div>
@@ -320,8 +320,10 @@ export default {
         order: '1.desc',
         pageNo: 1,
         pageSize: 10,
+        total: 123,
       },
       TrademarkName:undefined,
+      
     }
   },
 
@@ -421,13 +423,25 @@ export default {
       this.searchParams.order = nextOrder;
       //发送数据
       this.getData(this.searchParams);
-    }
+    },
+
+    //分页器页数跳转
+    goNewPage(data){
+      
+      this.searchParams.pageNo = data;
+      //因为本地mock的数据暂时是静态的,仓库返回的数据不会变ListData也不会变，分页器不会生效，这里手动模拟一下当前页的改变
+      
+      this.getData(this.searchParams);
+    },
+    
+    
     
     
   },
   computed: {
     listData() {
-       return this.$store.state.Search.list;
+      
+       return this.$store.state.Search.list[0];
     },
     
     ifAsc(){
@@ -436,7 +450,8 @@ export default {
     ifDesc(){
       console.log(`desc ${this.searchParams.order.indexOf('desc') != -1}`);
       return this.searchParams.order.indexOf('desc') != -1;
-    }
+    },
+
   },
 
 }

@@ -20,6 +20,7 @@ import TodayRecommend from './TodayRecommend'
 import Rank from './Rank'
 import Like from './Like'
 import Floor from './Floor'
+
 import { mapState } from 'vuex';
 export default{
     components:{

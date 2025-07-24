@@ -19,6 +19,10 @@ import 'swiper/css/swiper.min.css'
 import CarouselComponents from '@/components/Carousel'
 Vue.component(CarouselComponents.name,CarouselComponents);
 
+//全局注册TypeNav
+import TypeNav from '@/views/Home/TypeNav';
+Vue.component(TypeNav.name,TypeNav);
+
 //全局注册分页
 import FrPage from '@/components/FrPage'
 Vue.component(FrPage.name,FrPage);

@@ -2,30 +2,25 @@
     <div class="fr page">
             <div class="sui-pagination clearfix">
               <ul>
-                <li class="prev disabled">
-                  <a href="#">«上一页</a>
+                <li class="prev " >
+                  <span @click="goPage(Math.max(pageNo-1,1))" >上一页</span>
                 </li>
-                <li class="active">
-                  <a href="#">1</a>
+                <li :class="{active:pageNo==1}" v-show="startPage-2>=0" >
+                  <span @click="goPage(1)">1</span>
                 </li>
-                <li>
-                  <a href="#">2</a>
+                <li class="dotted" v-show="startPage-3>=0"><span>...</span></li>
+                <li v-for="data in pageList" :class="{active:pageNo==data}" >
+                  <span @click="goPage(data)">{{ data }}</span>
                 </li>
-                <li>
-                  <a href="#">3</a>
+                <li class="dotted" v-show="endPage+2 <= totalPage"><span>...</span></li>
+                <li v-show="endPage+1 <= totalPage"  :class="{active:pageNo==totalPage}" >
+                  <span @click="goPage(totalPage)">{{ totalPage }}</span>
                 </li>
-                <li>
-                  <a href="#">4</a>
-                </li>
-                <li>
-                  <a href="#">5</a>
-                </li>
-                <li class="dotted"><span>...</span></li>
-                <li class="next">
-                  <a href="#">下一页»</a>
+                <li class="next"  >
+                  <span @click="goPage(Math.min(pageNo+1,totalPage))" >下一页</span>
                 </li>
               </ul>
-              <div><span>共{{total}}页&nbsp;</span></div>
+              <div><span>共{{totalPage}}页</span></div>
             </div>
           </div>
 </template>
@@ -47,18 +42,34 @@
 
             },
             endPage(){
-                return Math.min( this.totalPage, this.startPage +  this.half)
+                return Math.min( this.totalPage, this.startPage +  this.continue-1)
+            },
+            pageList(){
+              let res = [];
+              for(let i = this.startPage;i <= this.endPage;++i){
+                res.push(i);
+              }
+              return res;
             }
+        },
+        methods:{
+          goPage(data){
+            this.$emit('goNewPage',data);
+          },
+          
         }
     }
 </script>
 
 <style scoped lang="less">
           .page {
-        width: 733px;
+        //width: 1000px;
         height: 66px;
         overflow: hidden;
-        float: right;
+        float: left;
+        
+        
+      
 
         .sui-pagination {
           margin: 18px 0;
@@ -67,14 +78,14 @@
             margin-left: 0;
             margin-bottom: 0;
             vertical-align: middle;
-            width: 490px;
+            //width: 690px;
             float: left;
 
             li {
               line-height: 18px;
               display: inline-block;
 
-              a {
+              span {
                 position: relative;
                 float: left;
                 line-height: 18px;
@@ -88,7 +99,7 @@
               }
 
               &.active {
-                a {
+                span {
                   background-color: #fff;
                   color: #e1251b;
                   border-color: #fff;
@@ -97,13 +108,13 @@
               }
 
               &.prev {
-                a {
+                span {
                   background-color: #fafafa;
                 }
               }
 
               &.disabled {
-                a {
+                span {
                   color: #999;
                   cursor: default;
                 }
@@ -125,7 +136,7 @@
               }
 
               &.next {
-                a {
+                span {
                   background-color: #fafafa;
                 }
               }
@@ -136,7 +147,12 @@
             color: #333;
             font-size: 14px;
             float: right;
-            width: 241px;
+            width: 150px;
+            height: 37px;
+            span{
+              line-height: 37px;
+              text-align: center;
+            }
           }
         }
       }
