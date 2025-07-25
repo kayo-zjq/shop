@@ -22,6 +22,14 @@
                         "id": 1,
                         "spuId": 1,
                         "baseSaleAttrId": 1,
+                        "saleAttrValueName": "粉色",
+                        "saleAttrName": "选择颜色",
+                        "isChecked": "1"
+                    },
+                    {
+                        "id": 2,
+                        "spuId": 1,
+                        "baseSaleAttrId": 1,
                         "saleAttrValueName": "黑色",
                         "saleAttrName": "选择颜色",
                         "isChecked": "0"
@@ -70,7 +78,7 @@
             "weight": "0.47",
             "tmId": 1,
             "category3Id": 61,
-            "skuDefaultImg": "http://192.168.200.128:8080/xxxx.jpg",
+            "skuDefaultImg": "/images/s1.png",
             "isSale": 1,
             "skuImageList": [
                 {
